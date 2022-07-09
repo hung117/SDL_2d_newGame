@@ -1,7 +1,7 @@
 #include <iostream>
 #include "./include/SDL2/SDL.h"
 // #include "./include/renderWindow.h"
-// #include "./include/SDL2/SDL_image.h"
+#include "./include/SDL2/SDL_image.h"
 
 using namespace std;
 
@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window *window = SDL_CreateWindow("HELLO SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
 
-    // if (window == NULL || !(IMG_Init(IMG_INIT_PNG)))
-    if (window == NULL)
+    if (window == NULL || !(IMG_Init(IMG_INIT_PNG)))
+    // if (window == NULL)
     {
         cout << "Can't creat window" << SDL_GetError() << endl;
         return 1;
