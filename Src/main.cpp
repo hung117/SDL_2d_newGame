@@ -22,11 +22,11 @@ int main(int argc, char *argv[])
         return 1;
     }
     /*================================== SDL LOOP==============================================*/
-    SDL_Event windowEvent;
     // SDL_Surface *gScreenSurface = NULL;
     RenderWindow Window("Game v1.0", 1280, 720); // CPP Construction
     // RenderWindow Window = new RenderWindow("Game v1.0", 1280, 720); doesnt work with cpp
     SDL_Event event;
+    SDL_Texture *grassTexture = Window.loadTexture("./Res/gfx/grass.png");
     bool bGameRunning = true;
     while (bGameRunning)
     {
@@ -36,6 +36,9 @@ int main(int argc, char *argv[])
             {
                 bGameRunning = false;
             }
+            Window.Clear();
+            Window.Render(grassTexture);
+            Window.Display();
         }
     }
     Window.cleanUp();
