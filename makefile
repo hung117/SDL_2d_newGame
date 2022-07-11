@@ -11,12 +11,14 @@ _HEADER= renderWindow.h
 HEADER=$(patsubst %,$(HDIR)/%,$(_HEADER))
 
 SrcDIR = ./Src/
-_SRC=main.cpp
+# _SRC=main.cpp
+_SRC=*.cpp
 SRC=$(patsubst %,$(SrcDIR)/%,$(_SRC))
 
 all:
 # $(CC) $(CFLAGS) $(LDIR) -o ./exe/game.exe ./Src/main.cpp $(LIBS)
-	$(CC) $(CFLAGS) $(LDIR) -o ./exe/game.exe $(SRC) $(HEADER) $(LIBS)
+# $(CC) $(CFLAGS) $(LDIR) -o ./exe/game.exe $(SRC) $(HEADER) $(LIBS)
+	$(CC) $(CFLAGS) $(LDIR) -o ./exe/game.exe $(SRC) $(LIBS)
 
 .PHONY: clean
 clean:

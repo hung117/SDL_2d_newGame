@@ -1,6 +1,6 @@
 #include <iostream>
 #include "./include/SDL2/SDL.h"
-// #include "./include/renderWindow.h"
+#include "./include/renderWindow.h"
 #include "./include/SDL2/SDL_image.h"
 
 using namespace std;
@@ -9,30 +9,36 @@ const int WIDTH = 800, HEIGHT = 600;
 
 int main(int argc, char *argv[])
 {
-
-    SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window *window = SDL_CreateWindow("HELLO SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
-
-    if (window == NULL || !(IMG_Init(IMG_INIT_PNG)))
-    // if (window == NULL)
+    /*============================================ INIT ===================================*/
+    // SDL_Init(SDL_INIT_EVERYTHING);
+    if (!(IMG_Init(IMG_INIT_PNG)))
     {
-        cout << "Can't creat window" << SDL_GetError() << endl;
+        cout << "IMG_Init has failed" << SDL_GetError() << endl;
         return 1;
     }
-    SDL_Event windowEvent;
-    while (true)
+    if ((SDL_Init(SDL_INIT_VIDEO) > 0))
     {
-        if (SDL_PollEvent(&windowEvent))
+        cout << "SDL_Video_Init has failed" << SDL_GetError() << endl;
+        return 1;
+    }
+    /*================================== SDL LOOP==============================================*/
+    SDL_Event windowEvent;
+    // SDL_Surface *gScreenSurface = NULL;
+    RenderWindow Window("Game v1.0", 1280, 720); // CPP Construction
+    // RenderWindow Window = new RenderWindow("Game v1.0", 1280, 720); doesnt work with cpp
+    SDL_Event event;
+    bool bGameRunning = true;
+    while (bGameRunning)
+    {
+        while (SDL_PollEvent(&event))
         {
-            if (windowEvent.type == SDL_QUIT)
+            if (event.type == SDL_QUIT)
             {
-                break;
+                bGameRunning = false;
             }
         }
     }
-    SDL_DestroyWindow(window);
+    Window.cleanUp();
     SDL_Quit();
-    return EXIT_SUCCESS;
-
     return 0;
 }
