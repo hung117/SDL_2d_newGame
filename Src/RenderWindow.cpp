@@ -1,5 +1,6 @@
 #include "./include/SDL2/SDL.h"
 #include "./SDL2/SDL_image.h"
+#include "./include/Entity.h"
 #include "./include/renderWindow.h"
 #include <iostream>
 using namespace std;
@@ -30,9 +31,20 @@ void RenderWindow::Clear()
 {
     SDL_RenderClear(pRenderer);
 }
-void RenderWindow::Render(SDL_Texture *pTex)
+void RenderWindow::Render(Entity &p_Entity)
 {
-    SDL_RenderCopy(pRenderer, pTex, NULL, NULL);
+    SDL_Rect src;
+    src.x = p_Entity.getCurFrame().x;
+    src.y = p_Entity.getCurFrame().y;
+    src.w = p_Entity.getCurFrame().w;
+    src.y = p_Entity.getCurFrame().h;
+    SDL_Rect dest;
+    dest.x = p_Entity.getX();
+    dest.y = p_Entity.getY();
+    dest.w = 32;
+    dest.h = 32;
+    // SDL_RenderCopy(pRenderer, pTex, NULL, NULL);
+    SDL_RenderCopy(pRenderer, p_Entity.GetTexture(), &src, &dest);
 }
 void RenderWindow::Display()
 {

@@ -7,7 +7,8 @@ LDIR=-L ./Src/lib
 LIBS= -lmingw32 -lSDL2main -lSDL2 -lSDL2_image 
 
 HDIR = ./Src/include
-_HEADER= renderWindow.h
+_HEADER= renderWindow.h Entity.h
+# _HEADER= *.h
 HEADER=$(patsubst %,$(HDIR)/%,$(_HEADER))
 
 SrcDIR = ./Src/

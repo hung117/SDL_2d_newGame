@@ -1,6 +1,7 @@
 #include <iostream>
 #include "./include/SDL2/SDL.h"
 #include "./include/renderWindow.h"
+#include "./include/Entity.h"
 #include "./include/SDL2/SDL_image.h"
 
 using namespace std;
@@ -21,12 +22,16 @@ int main(int argc, char *argv[])
         cout << "SDL_Video_Init has failed" << SDL_GetError() << endl;
         return 1;
     }
-    /*================================== SDL LOOP==============================================*/
     // SDL_Surface *gScreenSurface = NULL;
     RenderWindow Window("Game v1.0", 1280, 720); // CPP Construction
     // RenderWindow Window = new RenderWindow("Game v1.0", 1280, 720); doesnt work with cpp
     SDL_Event event;
-    SDL_Texture *grassTexture = Window.loadTexture("./Res/gfx/grass.png");
+    // SDL_Texture *grassTexture = Window.loadTexture("./Res/gfx/grass.png");
+    SDL_Texture *grassTexture = Window.loadTexture("../Res/gfx/grass.png");
+    // Render ground (aka platform)
+    Entity ground(0, 0, grassTexture);
+    /*================================== SDL LOOP==============================================*/
+
     bool bGameRunning = true;
     while (bGameRunning)
     {
@@ -37,7 +42,7 @@ int main(int argc, char *argv[])
                 bGameRunning = false;
             }
             Window.Clear();
-            Window.Render(grassTexture);
+            Window.Render(ground);
             Window.Display();
         }
     }
