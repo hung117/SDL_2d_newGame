@@ -49,3 +49,20 @@ create a 'RenderWindow' object named 'Window' with following parameter: '("Game 
 Initializer List is used in initializing the data members of a class <br>
 `RenderWindow::RenderWindow(const char *p_Title, int p_W, int p_H)` <ins> : pWindow(NULL), pRenderer(NULL)</ins>
 the `: pWindow(NULL), pRenderer(NULL)` is the initialize list to assign the class variable value;
+
+# Array
+
+## Array of class objects
+
+with "Entity" as a class, you can have class allocation right inside the array to create it's object.<br>
+_like this:_
+
+```
+    Entity ground[] = {
+        Entity(0, 0, grassTexture),
+        Entity(23, 0, grassTexture),
+        Entity(23, 23, grassTexture),
+        Entity(0, 23, grassTexture),
+        Entity(100, 300, grassTexture),
+    };
+```

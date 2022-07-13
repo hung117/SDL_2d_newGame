@@ -26,10 +26,15 @@ int main(int argc, char *argv[])
     RenderWindow Window("Game v1.0", 1280, 720); // CPP Construction
     // RenderWindow Window = new RenderWindow("Game v1.0", 1280, 720); doesnt work with cpp
     SDL_Event event;
-    // SDL_Texture *grassTexture = Window.loadTexture("./Res/gfx/grass.png");
     SDL_Texture *grassTexture = Window.loadTexture("../Res/gfx/grass.png");
-    // Render ground (aka platform)
-    Entity ground(0, 0, grassTexture);
+    //==================================== Render ground (aka platform)===============================
+    Entity ground[] = {
+        Entity(0, 0, grassTexture),
+        Entity(23, 0, grassTexture),
+        Entity(23, 23, grassTexture),
+        Entity(0, 23, grassTexture),
+        Entity(100, 300, grassTexture),
+    };
     /*================================== SDL LOOP==============================================*/
 
     bool bGameRunning = true;
@@ -42,7 +47,13 @@ int main(int argc, char *argv[])
                 bGameRunning = false;
             }
             Window.Clear();
-            Window.Render(ground);
+
+            // Window.Render(ground);
+            for (int i = 0; i < 5; i++)
+            {
+                Window.Render(ground[i]);
+            }
+
             Window.Display();
         }
     }
