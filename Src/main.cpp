@@ -3,8 +3,10 @@
 #include "./include/renderWindow.h"
 #include "./include/Entity.h"
 #include "./include/SDL2/SDL_image.h"
-
+#include "./include/misc.h"
 using namespace std;
+
+SDL_Event event;
 
 const int WIDTH = 800, HEIGHT = 600;
 
@@ -25,7 +27,7 @@ int main(int argc, char *argv[])
     // SDL_Surface *gScreenSurface = NULL;
     RenderWindow Window("Game v1.0", 1280, 720); // CPP Construction
     // RenderWindow Window = new RenderWindow("Game v1.0", 1280, 720); doesnt work with cpp
-    SDL_Event event;
+    // SDL_Event event;
     SDL_Texture *grassTexture = Window.loadTexture("../Res/gfx/grass.png");
     //==================================== Render ground (aka platform)===============================
     Entity ground[] = {
@@ -40,22 +42,15 @@ int main(int argc, char *argv[])
     bool bGameRunning = true;
     while (bGameRunning)
     {
-        while (SDL_PollEvent(&event))
+        EventHandler(event, bGameRunning);
+        Window.Clear();
+        // Window.Render(ground);
+        for (int i = 0; i < 5; i++)
         {
-            if (event.type == SDL_QUIT)
-            {
-                bGameRunning = false;
-            }
-            Window.Clear();
-
-            // Window.Render(ground);
-            for (int i = 0; i < 5; i++)
-            {
-                Window.Render(ground[i]);
-            }
-
-            Window.Display();
+            Window.Render(ground[i]);
         }
+
+        Window.Display();
     }
     Window.cleanUp();
     SDL_Quit();

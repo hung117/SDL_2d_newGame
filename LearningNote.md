@@ -8,6 +8,15 @@ to run game via cmd
 
 You get the warning because you are compiling a file that contains #pragma once. #pragma once is only intended to be used in headers, and there is no need to compile headers; hence the warning. Solution: Don't compile headers.
 
+# SDL
+
+## Render & Display
+
+what the render do is:
+The "Renderer" is basically a canvas.
+copy a bunch of texture and mapping them to a canvas as instructed via SDL_RenderCopy.
+SDL then uses that said canvas to display that canvas to window via SDL_RenderPresent.
+
 # HEADER
 
 ## CLASS IN HEADER
