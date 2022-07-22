@@ -35,7 +35,7 @@ SDL_Renderer *RenderWindow::getRenderer()
 {
     return pRenderer;
 }
-void RenderWindow::Render(Entity &p_Entity, int dstSize)
+void RenderWindow::Render(NPC &p_Entity, int dstSize)
 {
     SDL_Rect src;
     src.x = p_Entity.getCurFrame().x;

@@ -10,8 +10,9 @@ using namespace std;
 SDL_Event event;
 
 const int WIDTH = 800, HEIGHT = 600;
-const int FPS = 1;
+const int FPS = 30;
 const int frameDelay = 1000 / FPS;
+const int animDelay = 1000 / 10;
 Uint32 frameStart;
 int frameTime;
 int main(int argc, char *argv[])
@@ -56,10 +57,12 @@ int main(int argc, char *argv[])
         // {
         //     Window.Render(ground[i], 32);
         // }
-        Uint32 animtick = SDL_GetTicks() / 1000;
-        // npc.setX((animtick % 4) * 32);
-        npc.LoadAnimation();
-        Window.Render(skyBox, 800);
+        if (animDelay > SDL_GetTicks() - frameStart)
+        {
+            SDL_Delay(animDelay - (SDL_GetTicks() - frameStart));
+            npc.LoadAnimation();
+        }
+        // Window.Render(skyBox, 800);
         Window.Render(npc, 128 * 2);
         // if (!bshowLog && bGetInput)
         // { // cout << "xDir: " << xDir << ", yDir: " << yDir << ", bDash: " << bDash << endl;

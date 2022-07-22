@@ -1,4 +1,12 @@
 #include "./include/NPC.h"
+NPC::NPC(float _x, float _y, int _w, int _h, SDL_Texture *pTex)
+    : x(_x), y(_y), pTex(pTex)
+{
+    rect_curFrame.x = 0;
+    rect_curFrame.y = 0;
+    rect_curFrame.w = _w;
+    rect_curFrame.h = _h;
+}
 float NPC::getX()
 {
     return x;
@@ -24,7 +32,7 @@ float NPC::setY()
 }
 void NPC::LoadAnimation()
 {
-    if (this->rect_curFrame.x >= 128)
+    if (this->rect_curFrame.x >= 96)
     {
         this->rect_curFrame.x = 0;
         return;
@@ -44,7 +52,7 @@ SDL_Texture *NPC::GetTexture()
 {
     return pTex;
 }
-// SDL_Rect NPC::getCurFrame()
-// {
-//     return rect_curFrame;
-// }
+SDL_Rect NPC::getCurFrame()
+{
+    return rect_curFrame;
+}
