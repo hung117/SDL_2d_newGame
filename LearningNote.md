@@ -59,6 +59,15 @@ Initializer List is used in initializing the data members of a class <br>
 `RenderWindow::RenderWindow(const char *p_Title, int p_W, int p_H)` <ins> : pWindow(NULL), pRenderer(NULL)</ins>
 the `: pWindow(NULL), pRenderer(NULL)` is the initialize list to assign the class variable value;
 
+### Function
+
+#### Optional parameter
+
+only need in header, the cpp file dont have it.
+Eg:
+in header.h: ` void Render(Entity &p_Entity, int dstSize, bool flip = false);`<br>
+in src.cpp: `void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip)`
+
 # Array
 
 ## Array of class objects
@@ -75,3 +84,13 @@ _like this:_
         Entity(100, 300, grassTexture),
     };
 ```
+
+# BUG:
+
+## White screen
+
+Some thing has run out of bound (array for example);
+
+## change in Derived class doesnt really work:
+
+dont write which existed in the parent class to the derived class, because it will make a new variable with the same name instead of the one you intended it to be.

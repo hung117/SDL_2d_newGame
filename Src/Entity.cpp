@@ -1,12 +1,14 @@
 #include "./include/Entity.h"
-Entity::Entity(float _x, float _y, SDL_Texture *pTex)
+using namespace std;
+Entity::Entity(float _x, float _y, int _w, int _h, SDL_Texture *pTex)
     : x(_x), y(_y), pTex(pTex)
 {
     rect_curFrame.x = 0;
     rect_curFrame.y = 0;
-    rect_curFrame.w = 600;
-    rect_curFrame.h = 500;
+    rect_curFrame.w = _w;
+    rect_curFrame.h = _h;
 }
+
 float Entity::getX()
 {
     return x;
@@ -14,6 +16,14 @@ float Entity::getX()
 float Entity::getY()
 {
     return y;
+}
+void Entity::setX(int _x)
+{
+    this->x = _x;
+}
+void Entity::setY(int _y)
+{
+    this->y = _y;
 }
 SDL_Texture *Entity::GetTexture()
 {

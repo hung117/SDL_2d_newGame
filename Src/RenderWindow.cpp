@@ -31,19 +31,31 @@ void RenderWindow::Clear()
 {
     SDL_RenderClear(pRenderer);
 }
-void RenderWindow::Render(Entity &p_Entity)
+SDL_Renderer *RenderWindow::getRenderer()
+{
+    return pRenderer;
+}
+void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip)
+// void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip = false)
 {
     SDL_Rect src;
     src.x = p_Entity.getCurFrame().x;
     src.y = p_Entity.getCurFrame().y;
     src.w = p_Entity.getCurFrame().w;
-    src.y = p_Entity.getCurFrame().h;
+    src.h = p_Entity.getCurFrame().h;
+    // cout << "x: " << src.x << " p_Entity.getCurFrame().x: " << p_Entity.getCurFrame().x << endl;
     SDL_Rect dest;
     dest.x = p_Entity.getX();
     dest.y = p_Entity.getY();
-    dest.w = 32;
-    dest.h = 32;
-    // SDL_RenderCopy(pRenderer, pTex, NULL, NULL);
+    dest.w = dstSize;
+    dest.h = dstSize;
+    if (flip)
+    {
+        SDL_RendererFlip flip = SDL_FLIP_HORIZONTAL;
+        // SDL_RenderCopy(pRenderer, p_Entity.GetTexture(), &src, &dest, flip);
+        SDL_RenderCopyEx(pRenderer, p_Entity.GetTexture(), &src, &dest, 0.0f, nullptr, flip);
+        return;
+    }
     SDL_RenderCopy(pRenderer, p_Entity.GetTexture(), &src, &dest);
 }
 void RenderWindow::Display()
