@@ -2,14 +2,20 @@
 #include <iostream>
 #include <./SDL2/SDL.h>
 #include <./SDL2/SDL_image.h>
-class Entity
+#include <./Entity.h>
+class NPC : public Entity
 {
 public:
-    Entity(float _x, float _y, int _w, int _h, SDL_Texture *pTex);
+    using Entity::Entity;
     float getX();
     float getY();
+    void setX(int x);
+    float setY();
+    // void LoadAnimation(SDL_Texture &SDL_Texture);
+    void LoadAnimation();
     SDL_Texture *GetTexture();
-    SDL_Rect getCurFrame();
+    SDL_Texture *SetTexture();
+    // SDL_Rect getCurFrame();
 
 private:
     /* data */
