@@ -40,16 +40,20 @@ int main(int argc, char *argv[])
     /*================================== SDL LOOP==============================================*/
 
     bool bGameRunning = true;
+    int xDir, yDir = 0;
+    bool bDash, bshowLog, bGetInput = false;
     while (bGameRunning)
     {
-        EventHandler(event, bGameRunning);
+
+        EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog);
         Window.Clear();
         // Window.Render(ground);
         for (int i = 0; i < 5; i++)
         {
             Window.Render(ground[i]);
         }
-
+        if (!bshowLog && bGetInput)
+            cout << "xDir: " << xDir << ", yDir: " << yDir << ", bDash: " << bDash << endl;
         Window.Display();
     }
     Window.cleanUp();
