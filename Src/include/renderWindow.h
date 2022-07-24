@@ -11,7 +11,10 @@ public:
     // void Render(Entity &p_Entity);
     // void Render(Entity &p_Entity, int dstSize);
     void Render(Entity &p_Entity, int dstSize, bool flip = false);
+    // void Render(SDL_Texture *_texture, SDL_Rect &_rect);
+    void Render(SDL_Texture *_texture, SDL_Rect _rect);
     // void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip);
+    SDL_Texture *Surface2Texture(SDL_Surface *_surface);
     void Display();
     void cleanUp();
     SDL_Renderer *getRenderer();

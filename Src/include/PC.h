@@ -2,11 +2,11 @@
 #include <iostream>
 #include <./SDL2/SDL.h>
 #include <./SDL2/SDL_image.h>
-#include <./NPC.h>
-class PC : public NPC
+#include <./Char.h>
+class PC : public Char
 {
 public:
-    using NPC::NPC;
+    using Char::Char;
     void handleInput(int _xDir, int _yDir, bool _bDash, SDL_Texture *Idle, SDL_Texture *Walk);
     int getXDir();
     int getYDir();

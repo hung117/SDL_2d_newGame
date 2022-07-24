@@ -8,6 +8,10 @@ Entity::Entity(float _x, float _y, int _w, int _h, SDL_Texture *pTex)
     rect_curFrame.w = _w;
     rect_curFrame.h = _h;
 }
+Entity::Entity(float _x, float _y, int _w, int _h)
+    : x(_x), y(_y)
+{
+}
 
 float Entity::getX()
 {

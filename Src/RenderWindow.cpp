@@ -27,6 +27,10 @@ SDL_Texture *RenderWindow::loadTexture(const char *pFilePath)
     }
     return texture;
 }
+SDL_Texture *RenderWindow::Surface2Texture(SDL_Surface *_surface)
+{
+    return SDL_CreateTextureFromSurface(pRenderer, _surface);
+}
 void RenderWindow::Clear()
 {
     SDL_RenderClear(pRenderer);
@@ -57,6 +61,11 @@ void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip)
         return;
     }
     SDL_RenderCopy(pRenderer, p_Entity.GetTexture(), &src, &dest);
+}
+// void RenderWindow::Render(SDL_Texture *_texture, SDL_Rect &_rect)
+void RenderWindow::Render(SDL_Texture *_texture, SDL_Rect _rect)
+{
+    SDL_RenderCopy(pRenderer, _texture, nullptr, &_rect);
 }
 void RenderWindow::Display()
 {
