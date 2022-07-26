@@ -12,6 +12,7 @@ class Text : public Entity
 public:
     // Text(string fontPath, string _strTxt = "", float _x, float _y, int _w, int _h);
     Text(string fontPath, string _strTxt, float _x, float _y, int _w, int _h);
+    Text(string fontPath, string _strTxt, float _x, float _y);
     string getString();
     TTF_Font *getFont();
     void setFont(TTF_Font *font);

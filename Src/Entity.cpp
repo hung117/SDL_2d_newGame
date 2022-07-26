@@ -8,7 +8,23 @@ Entity::Entity(float _x, float _y, int _w, int _h, SDL_Texture *pTex)
     rect_curFrame.w = _w;
     rect_curFrame.h = _h;
 }
+Entity::Entity(float _x, float _y, SDL_Texture *pTex) : x(_x), y(_y), pTex(pTex)
+{
+    rect_curFrame.x = 0;
+    rect_curFrame.y = 0;
+    rect_curFrame.w = 0;
+    rect_curFrame.h = 0;
+}
+
 Entity::Entity(float _x, float _y, int _w, int _h)
+    : x(_x), y(_y)
+{
+    rect_curFrame.x = 0;
+    rect_curFrame.y = 0;
+    rect_curFrame.w = _w;
+    rect_curFrame.h = _h;
+}
+Entity::Entity(float _x, float _y)
     : x(_x), y(_y)
 {
 }

@@ -48,11 +48,17 @@ void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip)
     src.w = p_Entity.getCurFrame().w;
     src.h = p_Entity.getCurFrame().h;
     // cout << "x: " << src.x << " p_Entity.getCurFrame().x: " << p_Entity.getCurFrame().x << endl;
+
     SDL_Rect dest;
     dest.x = p_Entity.getX();
     dest.y = p_Entity.getY();
     dest.w = dstSize;
     dest.h = dstSize;
+    if (src.w == 0 || src.h == 0)
+    {
+        SDL_RenderCopy(pRenderer, p_Entity.GetTexture(), nullptr, &dest);
+        return;
+    }
     if (flip)
     {
         SDL_RendererFlip flip = SDL_FLIP_HORIZONTAL;

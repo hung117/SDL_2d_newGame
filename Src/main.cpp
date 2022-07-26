@@ -34,9 +34,14 @@ int main(int argc, char *argv[])
         Entity(100, 300, 800, 600, grassTexture),
     };
     Entity skyBox = {0, 0, 656, 518, SkyboxTexture};
-    Char npc = Char(60, 50, 32, 32, NPC_IdleTexutre);
-    PC PlayerChar = PC(100, 400, 32, 32, NPC_IdleTexutre);
-    Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10, 200, 200);
+    Char npc = Char(30, 2, 32, 32, NPC_IdleTexutre);
+    // PC PlayerChar = PC(100, 400, 32, 32, NPC_IdleTexutre);
+    Char testCol = Char(12, 64, 64, 200, 200, NPC_WalkTexutre);
+    // cout << testCol << endl;
+    PC PlayerChar = PC(10, 128, 128, 60, 50, 32, 32);
+
+    // Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10, 200, 200);
+    Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10);
 
     /*================================== SDL LOOP==============================================*/
 
@@ -62,6 +67,7 @@ int main(int argc, char *argv[])
             curTex = NPC_WalkTexutre;
             Txt_score.refresh();
             Txt_score.Update("1234");
+            // Txt_score.Update("FrameTime " + (string)frameTime);
         }
         PlayerChar.handleInput(xDir, yDir, bDash, NPC_IdleTexutre, NPC_WalkTexutre);
 
@@ -71,8 +77,16 @@ int main(int argc, char *argv[])
             npc.LoadAnimation(curTex);
             PlayerChar.LoadAnimation(PlayerChar.GetTexture());
         }
+
+        cout << PlayerChar.detectCollision(PlayerChar.getColBox(), testCol.getColBox()) << endl;
+        PlayerChar.Loop();
+        testCol.Loop();
+        Window.Render(testCol, testCol.getColBox()->w);
+        // cout << PlayerChar.getX() << "  " << PlayerChar.getY() << endl;
         Window.Render(Window.Surface2Texture(Txt_score.getSurface()), Txt_score.getRect());
-        Window.Render(PlayerChar, 64 * 2, PlayerChar.getBFlip());
+        // Window.Render(PlayerChar, 64 * 2, PlayerChar.getBFlip());
+        Window.Render(PlayerChar, PlayerChar.getColBox()->w, PlayerChar.getBFlip());
+
         Window.Render(npc, 128 * 2);
         Window.Display();
         frameTime = SDL_GetTicks() - frameStart;

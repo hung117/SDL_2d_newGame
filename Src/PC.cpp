@@ -19,6 +19,7 @@ bool PC::getBFlip()
 {
     return this->bflip;
 }
+
 void PC::handleInput(int _xDir, int _yDir, bool _bDash, SDL_Texture *Idle, SDL_Texture *Walk)
 {
     setXDir(_xDir);
@@ -49,11 +50,13 @@ void PC::handleInput(int _xDir, int _yDir, bool _bDash, SDL_Texture *Idle, SDL_T
         {
             this->setY(600);
         }
-        int Xposition = this->xDir * fSpeed + (int)this->getX();
-        int yposition = this->yDir * -1 * fSpeed + (int)this->getY();
+        int Xposition = this->xDir * moveSpeed + (int)this->getX();
+        int yposition = this->yDir * -1 * moveSpeed + (int)this->getY();
         setX(Xposition);
         setY(yposition);
-        std::cout << "XDir: " << xDir << " yDIr: " << yDir << std::endl;
+        colBox.x = x;
+        colBox.y = y;
+        // std::cout << "XDir: " << xDir << " yDIr: " << yDir << std::endl;
         pTex = Walk;
     }
     else

@@ -15,7 +15,6 @@ public:
     void setYDir(int _yDir);
 
 protected:
-    int fSpeed = 20;
     int xDir = 0;
     int yDir = 0;
     bool bDash = false;

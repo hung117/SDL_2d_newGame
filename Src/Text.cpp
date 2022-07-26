@@ -2,7 +2,8 @@
 // Text::Text(string fontPath, string _strTxt) : Entity(float _x, float _y, int _w, int _h)
 // Text::Text(string fontPath, string _strTxt) : Entity(_x, _y, _w, _h)
 // Text::Text(string fontPath, string _strTxt) : Entity(x, y, w, h)
-Text::Text(string fontPath, string _strTxt, float _x, float _y, int _w, int _h) : Entity(_x, _y, _w, _h)
+// Text::Text(string fontPath, string _strTxt, float _x, float _y, int _w, int _h) : Entity(_x, _y, _w, _h)
+Text::Text(string fontPath, string _strTxt, float _x, float _y) : Entity(_x, _y)
 {
     if (TTF_Init() < 0)
     {
@@ -23,8 +24,8 @@ Text::Text(string fontPath, string _strTxt, float _x, float _y, int _w, int _h) 
     // y = _y;
     textRect.x = _x;
     textRect.y = _y;
-    textRect.w = _w;
-    textRect.h = _h;
+    // textRect.w = _w;
+    // textRect.h = _h;
     text_surface = TTF_RenderText_Solid(font, strTxt.c_str(), foreground);
 }
 void Text::Update(string newStr)
