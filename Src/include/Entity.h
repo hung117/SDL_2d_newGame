@@ -2,6 +2,7 @@
 #include <iostream>
 #include <./SDL2/SDL.h>
 #include <./SDL2/SDL_image.h>
+#include "Vector2.h"
 class Entity
 {
 public:
@@ -15,10 +16,12 @@ public:
     SDL_Rect getCurFrame();
     void setX(int _x);
     void setY(int _y);
+    void setPos(int _x, int _y);
 
 protected:
     /* data */
-    float x, y;
+    // float x, y;
+    Vector2 position = Vector2(0, 0);
     SDL_Rect rect_curFrame;
     SDL_Texture *pTex;
 };

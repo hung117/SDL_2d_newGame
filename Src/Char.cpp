@@ -1,16 +1,16 @@
 #include "./include/Char.h"
 Char::Char(int _speed, int _boxW, int _boxH, float _x, float _y, int srcW, int srcH) : Entity(_x, _y, srcW, srcH)
 {
-    colBox.x = x;
-    colBox.y = y;
+    colBox.x = position.x;
+    colBox.y = position.y;
     colBox.w = _boxW;
     colBox.h = _boxH;
     moveSpeed = _speed;
 }
 Char::Char(int _speed, int _boxW, int _boxH, float _x, float _y, SDL_Texture *pTex) : Entity(_x, _y, pTex)
 {
-    colBox.x = x;
-    colBox.y = y;
+    colBox.x = position.x;
+    colBox.y = position.y;
     colBox.w = _boxW;
     colBox.h = _boxH;
     moveSpeed = _speed;
@@ -18,7 +18,7 @@ Char::Char(int _speed, int _boxW, int _boxH, float _x, float _y, SDL_Texture *pT
 
 void Char::setRectX(int _x)
 {
-    this->rect_curFrame.x = x;
+    this->rect_curFrame.x = position.x;
 }
 void Char::LoadAnimation(SDL_Texture *_Textures)
 // void NPC::LoadAnimation()
@@ -43,36 +43,48 @@ void Char::Loop()
 {
     if (bCollided)
     {
-
-        std::cout << "prevX: " << prevPos[0] << ", prevY: " << prevPos[1] << "x: " << x << ", y: " << y << std::endl;
-        // this->setX(0);
-        // this->setY(0);
-        // this->setY(prevPos[1] - 10);
-        // this->setX(prevPos[0] - 10);
-        this->setX(prevPos[0]);
-        this->setY(prevPos[1]);
-        colBox.x = x;
-        colBox.y = y;
-        return;
+        std::cout << "prevX: " << prevPos[0] << ", prevY: " << prevPos[1] << "x: " << position.x << ", y: " << position.y << std::endl;
+        position.x = prevPos[0];
+        position.y = prevPos[1];
     }
-    // prevPos[0] = static_cast<float> x;
-    // prevPos[1] = static_cast<float> y;
-    prevPos[0] = x;
-    prevPos[1] = y;
-    colBox.x = x;
-    colBox.y = y;
+    else
+    {
+        prevPos[0] = position.x;
+        prevPos[1] = position.y;
+    }
+
+    colBox.x = position.x;
+    colBox.y = position.y;
 }
 SDL_Rect *Char::getColBox()
 {
     return &colBox;
 }
-// SDL_Rect Char::getColBox()
-// {
-//     return this->colBox;
-// }
 bool Char::detectCollision(SDL_Rect *a, SDL_Rect *b)
 // bool Char::detectCollision(SDL_Rect &a, SDL_Rect &b)
 {
+    // if (a->x < 0)
+    if (this->getX() < 0)
+    {
+        // a->x = 800;
+        this->setX(800 - a->w);
+    }
+    if ((a->x + a->w) > 800)
+    {
+        // a->x = 0;
+        this->setX(0);
+    }
+    if ((a->y + a->h) > 600)
+    {
+        // a->y = 0;
+        this->setY(0);
+    }
+    // if (a->y < 0)
+    if (this->getY() < 0)
+    {
+        // a->y = 600;
+        this->setY(600 - a->h);
+    }
     int leftA, leftB;
     int rightA, rightB;
     int topA, topB;

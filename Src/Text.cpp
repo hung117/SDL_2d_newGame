@@ -47,8 +47,8 @@ SDL_Surface *Text::getSurface()
 }
 void Text::setTring(string str)
 {
-    textRect.x = x;
-    textRect.y = y;
+    textRect.x = position.x;
+    textRect.y = position.y;
     textRect.w = text_surface->w;
     textRect.h = text_surface->h;
 }

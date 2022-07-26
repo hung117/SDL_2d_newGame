@@ -1,15 +1,21 @@
 #include "./include/Entity.h"
 using namespace std;
 Entity::Entity(float _x, float _y, int _w, int _h, SDL_Texture *pTex)
-    : x(_x), y(_y), pTex(pTex)
+    : pTex(pTex)
+// : x(_x), y(_y), pTex(pTex)
+
 {
+    position = Vector2(_x, _y);
     rect_curFrame.x = 0;
     rect_curFrame.y = 0;
     rect_curFrame.w = _w;
     rect_curFrame.h = _h;
 }
-Entity::Entity(float _x, float _y, SDL_Texture *pTex) : x(_x), y(_y), pTex(pTex)
+// Entity::Entity(float _x, float _y, SDL_Texture *pTex) : x(_x), y(_y), pTex(pTex)
+Entity::Entity(float _x, float _y, SDL_Texture *pTex) : pTex(pTex)
 {
+    position = Vector2(_x, _y);
+
     rect_curFrame.x = 0;
     rect_curFrame.y = 0;
     rect_curFrame.w = 0;
@@ -17,33 +23,41 @@ Entity::Entity(float _x, float _y, SDL_Texture *pTex) : x(_x), y(_y), pTex(pTex)
 }
 
 Entity::Entity(float _x, float _y, int _w, int _h)
-    : x(_x), y(_y)
 {
+    position = Vector2(_x, _y);
+
     rect_curFrame.x = 0;
     rect_curFrame.y = 0;
     rect_curFrame.w = _w;
     rect_curFrame.h = _h;
 }
 Entity::Entity(float _x, float _y)
-    : x(_x), y(_y)
 {
+    position = Vector2(_x, _y);
 }
 
 float Entity::getX()
 {
-    return x;
+    return position.x;
 }
 float Entity::getY()
 {
-    return y;
+    return position.y;
 }
 void Entity::setX(int _x)
 {
-    this->x = _x;
+    position.x = _x;
+    // this->x = _x;
 }
 void Entity::setY(int _y)
 {
-    this->y = _y;
+    position.y = _y;
+    // this->y = _y;
+}
+void Entity::setPos(int _x, int _y)
+{
+    position.x = _x;
+    position.y = _y;
 }
 SDL_Texture *Entity::GetTexture()
 {
