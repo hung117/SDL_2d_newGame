@@ -1,6 +1,8 @@
 #pragma once
 #include "./SDL2/SDL.h"
 #include "./Entity.h"
+#include "./Char.h"
+#include "./NPC.h"
 #include "./SDL2/SDL_image.h"
 class RenderWindow
 {

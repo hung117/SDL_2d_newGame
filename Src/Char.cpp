@@ -102,29 +102,39 @@ bool Char::detectCollision(SDL_Rect *a, SDL_Rect *b)
     topB = b->y;
     bottomB = b->y + b->h;
     // If any of the sides from A are outside of B
-    bCollided = false;
 
     if (bottomA <= topB)
     {
+        bCollided = false;
+
         return false;
     }
 
     if (topA >= bottomB)
     {
+        bCollided = false;
+
         return false;
     }
 
     if (rightA <= leftB)
     {
+        bCollided = false;
+
         return false;
     }
 
     if (leftA >= rightB)
     {
+        bCollided = false;
+
         return false;
     }
-
     // If none of the sides from A are outside B
     bCollided = true;
     return true;
+}
+bool Char::getBcollided()
+{
+    return this->bCollided;
 }

@@ -2,6 +2,7 @@
 #include "./SDL2/SDL_image.h"
 #include "./include/Entity.h"
 #include "./include/renderWindow.h"
+#include "./include/Char.h"
 #include <iostream>
 using namespace std;
 RenderWindow::RenderWindow(const char *p_Title, int p_W, int p_H) : pWindow(NULL), pRenderer(NULL)
@@ -68,6 +69,7 @@ void RenderWindow::Render(Entity &p_Entity, int dstSize, bool flip)
     }
     SDL_RenderCopy(pRenderer, p_Entity.GetTexture(), &src, &dest);
 }
+
 // void RenderWindow::Render(SDL_Texture *_texture, SDL_Rect &_rect)
 void RenderWindow::Render(SDL_Texture *_texture, SDL_Rect _rect)
 {

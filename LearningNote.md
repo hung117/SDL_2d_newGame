@@ -94,3 +94,11 @@ Some thing has run out of bound (array for example);
 ## change in Derived class doesnt really work:
 
 dont write which existed in the parent class to the derived class, because it will make a new variable with the same name instead of the one you intended it to be.
+
+# QUESTION
+
+## function doesnt accept derived class pointer:
+
+```./Src//main.cpp:137:26: error: no matching function for call to 'RenderWindow::Render(Char*&, int&)'
+  137 |             Window.Render(StaticList[staticI], StaticList[staticI]->getColBox()->w);
+```

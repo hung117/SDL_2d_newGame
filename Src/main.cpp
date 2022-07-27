@@ -8,17 +8,20 @@
 #include "./include/PC.h"
 #include "./include/Text.h"
 #include "./include/NPC.h"
+#include <vector>
 using namespace std;
 
 SDL_Event event;
 
 const int WIDTH = 800, HEIGHT = 600;
-const int FPS = 80;
+const int FPS = 60;
 const int frameDelay = 1000 / FPS;
 const int animDelay = 1000 / 10;
-
+vector<NPC *> ActiveList;  // PC/NPC;
+vector<Char *> StaticList; // Wall, box,...;
 Uint32 frameStart;
 int frameTime;
+
 int main(int argc, char *argv[])
 {
     /*============================================ INIT ===================================*/
@@ -30,19 +33,28 @@ int main(int argc, char *argv[])
     SDL_Texture *Enemy_IdleTexture = Window.loadTexture("../Res/gfx/Idle_Enemy.png");
     SDL_Texture *Enemy_WalkTexture = Window.loadTexture("../Res/gfx/Walk_Enemy.png");
     SDL_Texture *SkyboxTexture = Window.loadTexture("../Res/gfx/sky.png");
+    SDL_Texture *BoxTexture = Window.loadTexture("../Res/gfx/box.png");
     //==================================== Render ground (aka platform)===============================
     Entity ground[] = {
         Entity(0, 0, 800, 600, grassTexture),
         Entity(32, 0, 800, 600, grassTexture),
         Entity(100, 300, 800, 600, grassTexture),
     };
+    Char box = Char(0, 64, 64, 300, 300, BoxTexture);
+    StaticList.push_back(&box);
     Entity skyBox = {0, 0, 656, 518, SkyboxTexture};
     Char npc = Char(30, 2, 32, 32, PC_IdleTexutre);
+    StaticList.push_back(&npc);
     // PC PlayerChar = PC(100, 400, 32, 32, PC_IdleTexutre);
-    Char testCol = Char(12, 64, 64, 200, 200, PC_WalkTexutre);
-    // cout << testCol << endl;
+    Char testCol = Char(12, 64, 64, 200, 200, grassTexture);
+    StaticList.push_back(&testCol);
+
+    // ActiveList.push_back(&testCol);
+
     PC PlayerChar = PC(25, 128, 128, 60, 50, 32, 32);
+    // ActiveList.push_back(&PlayerChar);
     NPC Npc = NPC(12, 128, 128, 360, 200, 32, 32);
+    ActiveList.push_back(&Npc);
     // Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10, 200, 200);
     Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10);
 
@@ -79,24 +91,69 @@ int main(int argc, char *argv[])
             SDL_Delay(animDelay - (SDL_GetTicks() - frameStart));
             npc.LoadAnimation(curTex);
             PlayerChar.LoadAnimation(PlayerChar.GetTexture());
-            Npc.LoadAnimation(Npc.GetTexture());
+            // Npc.LoadAnimation(Npc.GetTexture());
+            int ci = 0;
+            for (auto i = ActiveList.begin(); i != ActiveList.end(); ++i)
+            {
+                ActiveList[ci]->LoadAnimation(ActiveList[ci]->GetTexture());
+            }
         }
         // DETECT COL &  ANIMATION
-        cout << PlayerChar.detectCollision(PlayerChar.getColBox(), testCol.getColBox()) << endl;
-        Npc.checkDistance(PlayerChar.getColBox());
-        Npc.Behavior(Enemy_IdleTexture, Enemy_WalkTexture, grassTexture);
-        Npc.detectCollision(Npc.getColBox(), PlayerChar.getColBox());
+        int ci = 0; // count i;
+        // for (vector<Char *>::iterator i = ActiveList.begin(); i != ActiveList.end(); ++i)
+        for (auto i = ActiveList.begin(); i != ActiveList.end(); ++i)
+        {
+            int cj = 0;
+            ActiveList[ci]->checkDistance(PlayerChar.getColBox());
+            ActiveList[ci]->Behavior(Enemy_IdleTexture, Enemy_WalkTexture, grassTexture);
+            for (auto j = StaticList.begin(); j != StaticList.end(); ++j)
+            // for (vector<Char *>::iterator j = StaticList.begin(); j != StaticList.end(); ++j)
+            {
+                if (ci == 0)
+                {
+                    Window.Render(*StaticList[cj], StaticList[cj]->getColBox()->w);
+                }
+                // ActiveList[0]->detectCollision();
+                // *i->detectCollision(*i->getColBox(), *j->getColBox());
+
+                ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), StaticList[cj]->getColBox());
+                // if (!ActiveList[ci]->getBcollided())
+                // {
+                //     break;
+                //     ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), StaticList[cj]->getColBox());
+                // }
+                // ActiveList[ci]->Loop();
+                // cout << *i << "--" << i << "===";
+                if (ActiveList[ci]->getBcollided())
+                {
+                    break;
+                }
+                cj++;
+            }
+            ActiveList[ci]->Loop();
+            Window.Render(PlayerChar, PlayerChar.getColBox()->w, PlayerChar.getBFlip());
+            Window.Render(*ActiveList[ci], ActiveList[ci]->getColBox()->w, ActiveList[ci]->getBFlip());
+            ci++;
+        }
+        // Render static:
+        int staticI = 0;
+        for (auto i = StaticList.begin(); i != StaticList.end(); i++)
+        {
+            PlayerChar.detectCollision(PlayerChar.getColBox(), StaticList[staticI]->getColBox());
+            if (PlayerChar.getBcollided())
+            {
+                break;
+            }
+            staticI++;
+        }
+        // cout << PlayerChar.detectCollision(PlayerChar.getColBox(), testCol.getColBox()) << endl;
         PlayerChar.Loop();
-        testCol.Loop();
         // RENDER
-        Window.Render(Npc, Npc.getColBox()->w, Npc.getBFlip());
-        Window.Render(testCol, testCol.getColBox()->w);
-        // cout << PlayerChar.getX() << "  " << PlayerChar.getY() << endl;
         Window.Render(Window.Surface2Texture(Txt_score.getSurface()), Txt_score.getRect());
         // Window.Render(PlayerChar, 64 * 2, PlayerChar.getBFlip());
-        Window.Render(PlayerChar, PlayerChar.getColBox()->w, PlayerChar.getBFlip());
+        // Window.Render(PlayerChar, PlayerChar.getColBox()->w, PlayerChar.getBFlip());
 
-        Window.Render(npc, 128 * 2);
+        // Window.Render(npc, 128 * 2);
         Window.Display();
         frameTime = SDL_GetTicks() - frameStart;
         if (frameDelay > frameTime)

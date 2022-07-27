@@ -20,6 +20,7 @@ public:
     int getMoveSpeed();
     void setMoveSpeed(int _speed);
     void Loop();
+    bool getBcollided();
 
 protected:
     float prevPos[2];

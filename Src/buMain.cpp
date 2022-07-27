@@ -3,153 +3,116 @@
 // #include "./include/renderWindow.h"
 // #include "./include/Entity.h"
 // #include "./include/SDL2/SDL_image.h"
-// #include "./include/SDL2/SDL_ttf.h"
 // #include "./include/misc.h"
-// #include "./include/NPC.h"
+// #include "./include/Char.h"
 // #include "./include/PC.h"
+// #include "./include/Text.h"
+// #include "./include/NPC.h"
+// #include <vector>
 // using namespace std;
-// #include <string>
 
-// using namespace std;
+// SDL_Event event;
 
-// bool init();
-// void kill();
-// bool loop();
+// const int WIDTH = 800, HEIGHT = 600;
+// const int FPS = 60;
+// const int frameDelay = 1000 / FPS;
+// const int animDelay = 1000 / 10;
+// vector<SDL_Rect *> ActiveList; // PC/NPC;
+// vector<SDL_Rect *> StaticList; // Wall, box,...;
+// Uint32 frameStart;
+// int frameTime;
 
-// // Pointers to our window, renderer, texture, and font
-// SDL_Window *window;
-// SDL_Renderer *renderer;
-// SDL_Texture *text;
-// TTF_Font *font;
-// string input;
-
-// int main(int argc, char **args)
+// int main(int argc, char *argv[])
 // {
+//     /*============================================ INIT ===================================*/
+//     RenderWindow Window("Game v1.0", WIDTH, HEIGHT); // CPP Construction
 
-//     if (!init())
+//     SDL_Texture *grassTexture = Window.loadTexture("../Res/gfx/grass.png");
+//     SDL_Texture *PC_IdleTexutre = Window.loadTexture("../Res/gfx/Idle_PC.png");
+//     SDL_Texture *PC_WalkTexutre = Window.loadTexture("../Res/gfx/Walk_PC.png");
+//     SDL_Texture *Enemy_IdleTexture = Window.loadTexture("../Res/gfx/Idle_Enemy.png");
+//     SDL_Texture *Enemy_WalkTexture = Window.loadTexture("../Res/gfx/Walk_Enemy.png");
+//     SDL_Texture *SkyboxTexture = Window.loadTexture("../Res/gfx/sky.png");
+//     SDL_Texture *BoxTexture = Window.loadTexture("../Res/gfx/box.png");
+//     //==================================== Render ground (aka platform)===============================
+//     Entity ground[] = {
+//         Entity(0, 0, 800, 600, grassTexture),
+//         Entity(32, 0, 800, 600, grassTexture),
+//         Entity(100, 300, 800, 600, grassTexture),
+//     };
+//     Char box = Char(0, 128, 128, 300, 300, BoxTexture);
+//     StaticList.push_back(box.getColBox());
+//     Entity skyBox = {0, 0, 656, 518, SkyboxTexture};
+//     Char npc = Char(30, 2, 32, 32, PC_IdleTexutre);
+//     StaticList.push_back(npc.getColBox());
+//     // PC PlayerChar = PC(100, 400, 32, 32, PC_IdleTexutre);
+//     Char testCol = Char(12, 64, 64, 200, 200, grassTexture);
+//     // cout << testCol << endl;
+//     PC PlayerChar = PC(25, 128, 128, 60, 50, 32, 32);
+//     NPC Npc = NPC(12, 128, 128, 360, 200, 32, 32);
+//     // Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10, 200, 200);
+//     Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: placeHolder", 350, 10);
+
+//     /*================================== SDL LOOP==============================================*/
+
+//     bool bGameRunning = true;
+//     int xDir = 0, yDir = 0;
+//     bool bDash, bshowLog, bGetInput = false;
+//     while (bGameRunning)
 //     {
-//         system("pause");
-//         return 1;
-//     }
+//         frameStart = SDL_GetTicks();
+//         EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog);
 
-//     while (loop())
-//     {
-//         // wait before processing the next frame
-//         SDL_Delay(10);
-//     }
+//         Window.Clear();
+//         Window.Render(skyBox, 800);
+//         Txt_score.Update();
 
-//     kill();
-//     return 0;
-// }
-
-// bool loop()
-// {
-
-//     static const unsigned char *keys = SDL_GetKeyboardState(NULL);
-
-//     SDL_Event e;
-//     SDL_Rect dest;
-
-//     // Clear the window to white
-//     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-//     SDL_RenderClear(renderer);
-
-//     // Event loop
-//     while (SDL_PollEvent(&e) != 0)
-//     {
-//         switch (e.type)
+//         for (int i = 0; i < sizeof(ground) / sizeof(ground[0]); i++)
 //         {
-//         case SDL_QUIT:
-//             return false;
-//         case SDL_TEXTINPUT:
-//             input += e.text.text;
-//             break;
-//         case SDL_KEYDOWN:
-//             if (e.key.keysym.sym == SDLK_BACKSPACE && input.size())
-//             {
-//                 input.pop_back();
-//             }
-//             break;
+//             Window.Render(ground[i], 32);
+//         }
+//         SDL_Texture *curTex = PC_IdleTexutre;
+//         if (xDir != 0)
+//         {
+//             curTex = PC_WalkTexutre;
+//             Txt_score.refresh();
+//             Txt_score.Update("1234");
+//             // Txt_score.Update("FrameTime " + (string)frameTime);
+//         }
+//         PlayerChar.handleInput(xDir, yDir, bDash, PC_IdleTexutre, PC_WalkTexutre);
+
+//         if (animDelay > SDL_GetTicks() - frameStart)
+//         {
+//             SDL_Delay(animDelay - (SDL_GetTicks() - frameStart));
+//             npc.LoadAnimation(curTex);
+//             PlayerChar.LoadAnimation(PlayerChar.GetTexture());
+//             Npc.LoadAnimation(Npc.GetTexture());
+//         }
+//         // DETECT COL &  ANIMATION
+//         cout << PlayerChar.detectCollision(PlayerChar.getColBox(), testCol.getColBox()) << endl;
+//         Npc.checkDistance(PlayerChar.getColBox());
+//         Npc.Behavior(Enemy_IdleTexture, Enemy_WalkTexture, grassTexture);
+//         Npc.detectCollision(Npc.getColBox(), PlayerChar.getColBox());
+//         PlayerChar.Loop();
+//         testCol.Loop();
+//         // RENDER
+//         Window.Render(Npc, Npc.getColBox()->w, Npc.getBFlip());
+//         Window.Render(testCol, testCol.getColBox()->w);
+//         // cout << PlayerChar.getX() << "  " << PlayerChar.getY() << endl;
+//         Window.Render(Window.Surface2Texture(Txt_score.getSurface()), Txt_score.getRect());
+//         // Window.Render(PlayerChar, 64 * 2, PlayerChar.getBFlip());
+//         Window.Render(PlayerChar, PlayerChar.getColBox()->w, PlayerChar.getBFlip());
+
+//         Window.Render(npc, 128 * 2);
+//         Window.Display();
+//         frameTime = SDL_GetTicks() - frameStart;
+//         if (frameDelay > frameTime)
+//         {
+//             SDL_Delay(frameDelay - frameTime);
 //         }
 //     }
-//     SDL_Color foreground = {125, 123, 175};
-
-//     if (input.size())
-//     {
-//         SDL_Surface *text_surf = TTF_RenderText_Solid(font, input.c_str(), foreground);
-//         text = SDL_CreateTextureFromSurface(renderer, text_surf);
-
-//         // dest.x = 320 - (text_surf->w / 2.0f);
-//         dest.x = 500;
-//         dest.y = 10;
-//         // dest.w = text_surf->w;
-//         dest.w = 300;
-//         dest.h = text_surf->h;
-//         SDL_RenderCopy(renderer, text, NULL, &dest);
-
-//         SDL_DestroyTexture(text);
-//         SDL_FreeSurface(text_surf);
-//     }
-
-//     // Update window
-//     SDL_RenderPresent(renderer);
-
-//     return true;
-// }
-
-// bool init()
-// {
-//     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-//     {
-//         cout << "Error initializing SDL: " << SDL_GetError() << endl;
-//         return false;
-//     }
-//     // Initialize SDL_ttf
-//     if (TTF_Init() < 0)
-//     {
-//         cout << "Error intializing SDL_ttf: " << TTF_GetError() << endl;
-//         return false;
-//     }
-
-//     window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
-//     if (!window)
-//     {
-//         cout << "Error creating window: " << SDL_GetError() << endl;
-//         return false;
-//     }
-
-//     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-//     if (!renderer)
-//     {
-//         cout << "Error creating renderer: " << SDL_GetError() << endl;
-//         return false;
-//     }
-//     // Load font
-//     font = TTF_OpenFont("../Res/dev/font/font.ttf", 72);
-//     if (!font)
-//     {
-//         cout << "Error loading font: " << TTF_GetError() << endl;
-//         return false;
-//     }
-
-//     // Start sending SDL_TextInput events
-//     SDL_StartTextInput();
-
-//     return true;
-// }
-
-// void kill()
-// {
-//     SDL_StopTextInput();
-
-//     TTF_CloseFont(font);
-
-//     SDL_DestroyRenderer(renderer);
-//     SDL_DestroyWindow(window);
-//     window = NULL;
-//     renderer = NULL;
-
-//     TTF_Quit();
-//     IMG_Quit();
+//     Txt_score.clean();
+//     Window.cleanUp();
 //     SDL_Quit();
+//     return 0;
 // }

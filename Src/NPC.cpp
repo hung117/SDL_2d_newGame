@@ -15,7 +15,8 @@ bool NPC::getBFlip()
 void NPC::Patrol()
 {
     srand(time(NULL));
-    xDir = (rand() % 3) + 1;
+    // xDir = (rand() % 3) + 1;
+    xDir = 1;
     yDir = (rand() % 3) + 1;
 }
 void NPC::RunAway()
@@ -52,8 +53,9 @@ void NPC::Behavior(SDL_Texture *_Idle, SDL_Texture *_Walk, SDL_Texture *_Attack)
     else
     {
         // LoadAnimation(_Walk);
+
         pTex = _Walk;
-        if (distance2PC < 10)
+        if (distance2PC < 50)
         {
             RunAway();
         }
@@ -63,10 +65,16 @@ void NPC::Behavior(SDL_Texture *_Idle, SDL_Texture *_Walk, SDL_Texture *_Attack)
             bflip = true;
         }
         float xPos = position.x + moveSpeed * xDir;
+        if (bCollided)
+        {
+            xDir *= -1;
+            // yDir *= -1;
+        }
+
         float yPos = position.y + moveSpeed * yDir;
         position.setVector2(xPos, yPos);
-        // detectCollision(&colBox, target);
-        std::cout << "DETECTSLDKJF LSDKJF";
-        Loop();
+        // setPos(xPos, yPos);
+        colBox.x = position.x;
+        colBox.y = position.y;
     }
 }
