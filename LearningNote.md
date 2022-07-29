@@ -102,3 +102,5 @@ dont write which existed in the parent class to the derived class, because it wi
 ```./Src//main.cpp:137:26: error: no matching function for call to 'RenderWindow::Render(Char*&, int&)'
   137 |             Window.Render(StaticList[staticI], StaticList[staticI]->getColBox()->w);
 ```
+
+## enemy override behavior doesnt work. why ?
