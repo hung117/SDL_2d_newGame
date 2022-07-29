@@ -4,7 +4,7 @@ SDIR=./Src/include
 CFLAGS=-I$(SDIR)
 
 LDIR=-L ./Src/lib
-LIBS= -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+LIBS= -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 HDIR = ./Src/include
 _HEADER= renderWindow.h Entity.h

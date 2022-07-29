@@ -5,12 +5,14 @@
 #include "./include/renderWindow.h"
 #include "./include/Entity.h"
 #include "./include/SDL2/SDL_image.h"
+#include "./include/SDL2/SDL_mixer.h"
 #include "./include/misc.h"
 #include "./include/Char.h"
 #include "./include/PC.h"
 #include "./include/Text.h"
 #include "./include/NPC.h"
 #include "./include/Enemy.h"
+#include "./include/audioPlayer.h"
 #include <random>
 #include <time.h>
 #include <vector>
@@ -30,6 +32,8 @@ double SCORE = 0;
 bool bGameOver = false;
 int main(int argc, char *argv[])
 {
+    /*===================== MUSIC =====================*/
+    AudioPlayer mixer = AudioPlayer("../Res/audio/test.ogg");
     /*============================================ INIT ===================================*/
     RenderWindow Window("Game v1.0", WIDTH, HEIGHT); // CPP Construction
 
@@ -65,12 +69,16 @@ int main(int argc, char *argv[])
     PC PlayerChar = PC(30, 60, 60, 60, 50, 32, 32);
     // NPC Npc = NPC(24, 64, 64, 360, 200, 32, 32);
     // ActiveList.push_back(&Npc);
-    NPC frog1 = NPC(10, 16, 16, 360, 200, 32, 32);
+    NPC frog1 = NPC(5, 16, 16, 360, 200, 32, 32);
     ActiveList.push_back(&frog1);
-    NPC frog2 = NPC(10, 16, 16, 360, 200, 32, 32);
+    NPC frog2 = NPC(5, 16, 16, 360, 200, 32, 32);
     ActiveList.push_back(&frog2);
-    NPC frog3 = NPC(24, 32, 32, 400, 400, 32, 32);
+    NPC frog3 = NPC(3, 32, 32, 400, 400, 32, 32);
     ActiveList.push_back(&frog3);
+    NPC frog4 = NPC(3, 16, 16, 400, 0, 32, 32);
+    ActiveList.push_back(&frog4);
+    NPC frog5 = NPC(3, 20, 20, 0, 400, 32, 32);
+    ActiveList.push_back(&frog5);
     // Enemy Enemy1 = Enemy(20, 64, 64, 365, 100, 32, 32);
     NPC Enemy1 = NPC(20, 64, 64, 365, 100, 32, 32, true);
     ActiveList.push_back(&Enemy1);
@@ -84,9 +92,11 @@ int main(int argc, char *argv[])
     bool bGameRunning = true;
     int xDir = 0, yDir = 0;
     bool bDash, bshowLog, bGetInput = false;
+    mixer.Play();
 
     while (bGameRunning)
     {
+
         frameStart = SDL_GetTicks();
         EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog);
         if (bGameOver)
@@ -94,17 +104,21 @@ int main(int argc, char *argv[])
             Window.Clear();
             Txt_GameOVER.Update();
             Window.Render(skyBox, 800);
-
+            mixer.Pause();
+            // mixer.Stop();
             Window.Render(Window.Surface2Texture(Txt_GameOVER.getSurface()), Txt_GameOVER.getRect());
             Window.Display();
             if (bDash == true)
             {
+                mixer.loadChunk("../Res/audio/scratch.wav");
+
                 bGameOver = false;
-                PlayerChar.setPos(0, 0);
+                PlayerChar.setPos(PlayerChar.getX() + 100, PlayerChar.getY() + 200);
             }
         }
         else
         {
+            mixer.Resume();
             Window.Clear();
             Window.Render(skyBox, 800);
             Txt_score.Update();
@@ -149,22 +163,29 @@ int main(int argc, char *argv[])
                 // PlayerChar.detectCollision(PlayerChar.getColBox(), ActiveList[ci]->getColBox());
                 PlayerChar.detectCollision(PlayerChar.getColBox(), ActiveList[ci]->getColBox());
                 stringstream stream;
+                string scoreDisplay;
+
                 switch (PlayerChar.checkHit(ActiveList[ci]->getBHostile()))
                 {
                 case 1:
                     // bGameRunning = false;
                     std::cout << "collided with hostile" << std::endl;
+                    mixer.loadChunk("../Res/audio/medium.wav");
+                    mixer.PlayChunk();
                     bGameOver = true;
                     break;
                 case 2:
                     // Frog get eaten
                     std::cout << "collided with frog" << std::endl;
                     srand(time(NULL));
+                    mixer.loadChunk("../Res/audio/scratch.wav");
+                    mixer.PlayChunk();
                     ActiveList[ci]->setPos(rand() % 900, rand() % 300);
                     SCORE += 10;
                     Txt_score.refresh();
                     stream << fixed << setprecision(2) << SCORE;
-                    Txt_score.Update(stream.str());
+                    scoreDisplay = "Score: " + stream.str();
+                    Txt_score.Update(scoreDisplay);
                     break;
                 default:
                     break;
@@ -217,6 +238,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+    mixer.close();
     Txt_score.clean();
     Txt_Timer.clean();
     Window.cleanUp();
