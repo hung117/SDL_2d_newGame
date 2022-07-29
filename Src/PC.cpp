@@ -39,11 +39,24 @@ void PC::handleInput(int _xDir, int _yDir, bool _bDash, SDL_Texture *Idle, SDL_T
         setPos(Xposition, yposition);
         colBox.x = position.x;
         colBox.y = position.y;
-        // std::cout << "XDir: " << xDir << " yDIr: " << yDir << std::endl;
         pTex = Walk;
     }
     else
     {
         pTex = Idle;
     }
+}
+int PC::checkHit(bool _bHostile) // HIT BY HOSTILE
+{
+    if (bCollided && _bHostile)
+    {
+        std::cout << "PC COLLIDED WITH HOSTILE" << std::endl;
+        return 1; // PC DIE
+    }
+    else if (bCollided && !_bHostile)
+    {
+        std::cout << "PC COLLIDED WITH HOSTILE" << std::endl;
+        return 2; // FROG DIE
+    }
+    return 0; // DEFAULT, NOTHING HAPPENS
 }

@@ -13,8 +13,11 @@ public:
     bool getBFlip();
     void setXDir(int _xDir);
     void setYDir(int _yDir);
+    int checkHit(bool _bHostile = false);
 
 protected:
+    bool bEat = false;
+    bool bHit = false;
     int xDir = 0;
     int yDir = 0;
     bool bDash = false;
