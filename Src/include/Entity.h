@@ -17,10 +17,10 @@ public:
     void setX(int _x);
     void setY(int _y);
     void setPos(int _x, int _y);
+    Vector2 *getPos();
 
 protected:
     /* data */
-    // float x, y;
     Vector2 position = Vector2(0, 0);
     SDL_Rect rect_curFrame;
     SDL_Texture *pTex;

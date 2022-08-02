@@ -13,6 +13,7 @@
 #include "./include/NPC.h"
 #include "./include/Enemy.h"
 #include "./include/audioPlayer.h"
+#include "./include/Bullet.h"
 #include <random>
 #include <time.h>
 #include <vector>
@@ -20,12 +21,16 @@ using namespace std;
 
 SDL_Event event;
 
-const int WIDTH = 800, HEIGHT = 600;
+// const int WIDTH = 800, HEIGHT = 600;
+const int WIDTH = 800, HEIGHT = 800;
+
 const int FPS = 60;
 const int frameDelay = 1000 / FPS;
 const int animDelay = 1000 / 10;
-vector<NPC *> ActiveList;  // PC/NPC;
-vector<Char *> StaticList; // Wall, box,...;
+vector<NPC *> ActiveList;    // PC/NPC;
+vector<Char *> StaticList;   // Wall, box,...;
+vector<Bullet *> Bullets;    // Wall, box,...;
+vector<Bullet *> BulletPool; // Wall, box,...;
 Uint32 frameStart;
 int frameTime;
 double SCORE = 0;
@@ -63,12 +68,11 @@ int main(int argc, char *argv[])
     StaticList.push_back(&box3);
     StaticList.push_back(&box4);
     Entity skyBox = {0, 0, 656, 518, SkyboxTexture};
-    Char testCol = Char(12, 64, 64, 200, 200, grassTexture);
+    Char testCol = Char(12, 64, 64, 100, 200, BoxTexture);
     StaticList.push_back(&testCol);
 
     PC PlayerChar = PC(30, 60, 60, 60, 50, 32, 32);
-    // NPC Npc = NPC(24, 64, 64, 360, 200, 32, 32);
-    // ActiveList.push_back(&Npc);
+
     NPC frog1 = NPC(5, 16, 16, 360, 200, 32, 32);
     ActiveList.push_back(&frog1);
     NPC frog2 = NPC(5, 16, 16, 360, 200, 32, 32);
@@ -79,31 +83,41 @@ int main(int argc, char *argv[])
     ActiveList.push_back(&frog4);
     NPC frog5 = NPC(3, 20, 20, 0, 400, 32, 32);
     ActiveList.push_back(&frog5);
-    // Enemy Enemy1 = Enemy(20, 64, 64, 365, 100, 32, 32);
+
     NPC Enemy1 = NPC(20, 64, 64, 365, 100, 32, 32, true);
     ActiveList.push_back(&Enemy1);
 
+    // Bullet bullet1 = Bullet(10, 16, 16, 0, 0, 32, 32);
+    Bullet bullet1 = Bullet(10, 50, 50000, 0, 0, 32, 32);
+    BulletPool.push_back(&bullet1);
+    Bullet *tmp;
     Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: 0.00", 350, 10);
-    Text Txt_Timer = Text("../Res/dev/font/font.ttf", "SCORE: ", 200, 10);
+    Text Txt_Timer = Text("../Res/dev/font/font.ttf", "Timer: 0.00", 200, 10);
     Text Txt_GameOVER = Text("../Res/dev/font/font.ttf", "GameOver: Play Again ?", 300, 300);
-
+    stringstream stream;
+    string scoreDisplay;
     /*================================== SDL LOOP==============================================*/
 
     bool bGameRunning = true;
     int xDir = 0, yDir = 0;
+    bool bLClick = false;
     bool bDash, bshowLog, bGetInput = false;
+    bshowLog = false;
     mixer.Play();
+    Vector2 mousePos = Vector2(0, 0);
 
     while (bGameRunning)
     {
 
         frameStart = SDL_GetTicks();
-        EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog);
+        // EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog);
+        EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog, bLClick, &mousePos);
         if (bGameOver)
         {
             Window.Clear();
             Txt_GameOVER.Update();
             Window.Render(skyBox, 800);
+            SCORE = 0;
             mixer.Pause();
             // mixer.Stop();
             Window.Render(Window.Surface2Texture(Txt_GameOVER.getSurface()), Txt_GameOVER.getRect());
@@ -113,7 +127,6 @@ int main(int argc, char *argv[])
                 mixer.loadChunk("../Res/audio/scratch.wav");
 
                 bGameOver = false;
-                PlayerChar.setPos(PlayerChar.getX() + 100, PlayerChar.getY() + 200);
             }
         }
         else
@@ -122,7 +135,10 @@ int main(int argc, char *argv[])
             Window.Clear();
             Window.Render(skyBox, 800);
             Txt_score.Update();
-            Txt_Timer.Update();
+            Txt_Timer.refresh();
+            stringstream ss;
+            ss << frameStart;
+            Txt_Timer.Update("Time: " + ss.str().substr(0, 2));
             for (int i = 0; i < sizeof(ground) / sizeof(ground[0]); i++)
             {
                 Window.Render(ground[i], 32);
@@ -146,6 +162,10 @@ int main(int argc, char *argv[])
                 {
                     if (ci != 0)
                     {
+                        if (StaticList[cj]->bgetBbullet())
+                        {
+                            StaticList[cj]->Loop();
+                        }
                         if (ActiveList[cj] != nullptr)
                         {
                             ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), ActiveList[cj]->getColBox());
@@ -154,16 +174,14 @@ int main(int argc, char *argv[])
                     ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), StaticList[cj]->getColBox());
                     if (ActiveList[ci]->getBcollided())
                     {
-                        break;
+                        // break;
+                        goto toNextActive;
                     }
                     cj++;
                 }
                 if (ci != 0)
                     ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), ActiveList[ci - 1]->getColBox());
-                // PlayerChar.detectCollision(PlayerChar.getColBox(), ActiveList[ci]->getColBox());
                 PlayerChar.detectCollision(PlayerChar.getColBox(), ActiveList[ci]->getColBox());
-                stringstream stream;
-                string scoreDisplay;
 
                 switch (PlayerChar.checkHit(ActiveList[ci]->getBHostile()))
                 {
@@ -173,6 +191,7 @@ int main(int argc, char *argv[])
                     mixer.loadChunk("../Res/audio/medium.wav");
                     mixer.PlayChunk();
                     bGameOver = true;
+                    PlayerChar.setPos(ActiveList[ci]->getX() + 200, ActiveList[ci]->getY() + 800);
                     break;
                 case 2:
                     // Frog get eaten
@@ -183,6 +202,7 @@ int main(int argc, char *argv[])
                     ActiveList[ci]->setPos(rand() % 900, rand() % 300);
                     SCORE += 10;
                     Txt_score.refresh();
+                    stream.str("");
                     stream << fixed << setprecision(2) << SCORE;
                     scoreDisplay = "Score: " + stream.str();
                     Txt_score.Update(scoreDisplay);
@@ -190,6 +210,7 @@ int main(int argc, char *argv[])
                 default:
                     break;
                 }
+            toNextActive:
                 ActiveList[ci]->Loop();
                 Window.Render(PlayerChar, PlayerChar.getColBox()->w, PlayerChar.getBFlip());
                 Window.Render(*ActiveList[ci], ActiveList[ci]->getColBox()->w, ActiveList[ci]->getBFlip());
@@ -218,8 +239,57 @@ int main(int argc, char *argv[])
                     ActiveList[ci]->LoadAnimation(ActiveList[ci]->GetTexture());
                     ci++;
                 }
+                ci = 0;
+                for (auto i = Bullets.begin(); i != Bullets.end(); ++i)
+                {
+                    Bullets[ci]->LoadAnimation(Bullets[ci]->GetTexture());
+                    ci++;
+                }
             }
-
+            if (bLClick)
+            {
+                cout << endl
+                     << "CLICK" << endl;
+                if (BulletPool.size() > 0 && BulletPool.size() <= 2)
+                {
+                    // tmp = BulletPool.back();
+                    // tmp->Call(&mousePos, PlayerChar.getPos());
+                    // BulletPool.pop_back();
+                    // Bullets.push_back(tmp);
+                    if (Bullets.size() > 0)
+                        Bullets.pop_back();
+                    Bullets.push_back(&bullet1);
+                    Bullets.back()->Call(&mousePos, PlayerChar.getPos());
+                }
+            }
+            ci = 0;
+            for (auto i = ActiveList.begin(); i != ActiveList.end(); ++i)
+            {
+                int cj = 0;
+                for (auto j = Bullets.begin(); j != Bullets.end(); ++j)
+                {
+                    Bullets[cj]->Behavior(grassTexture);
+                    Bullets[cj]->checkInRange(Bullets[cj]->getColBox());
+                    Bullets[cj]->Loop();
+                    if (ci == 0)
+                        Window.Render(*Bullets[cj], Bullets[cj]->getColBox()->w);
+                    if (ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), Bullets[cj]->getColBox()))
+                    {
+                        cout << "ACTIVE GET SHOT!!!";
+                        Bullets.pop_back();
+                        goto getShot;
+                    }
+                    else
+                    {
+                        goto notGetShot;
+                    }
+                    cj++;
+                }
+            getShot:
+                ActiveList[ci]->LoopGetHit();
+            notGetShot:
+                ci++;
+            }
             // RENDER
             staticI = 0; // Render static:
             for (auto j = StaticList.begin(); j != StaticList.end(); ++j)
@@ -238,6 +308,10 @@ int main(int argc, char *argv[])
             }
         }
     }
+    Bullets.clear();
+    BulletPool.clear();
+    ActiveList.clear();
+    StaticList.clear();
     mixer.close();
     Txt_score.clean();
     Txt_Timer.clean();

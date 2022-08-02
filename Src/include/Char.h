@@ -11,19 +11,20 @@ public:
     Char(int _speed, int _boxW, int _boxH, float _x, float _y, SDL_Texture *pTex);
     void setRectX(int x); // select the texture part;
     void LoadAnimation(SDL_Texture *_Texture);
-    // void LoadAnimation();
-    // bool detectCollision(SDL_Rect &a, SDL_Rect &b);
     bool detectCollision(SDL_Rect *a, SDL_Rect *b);
     SDL_Texture *SetTexture();
-    // SDL_Rect getColBox();
     SDL_Rect *getColBox();
     int getMoveSpeed();
     void setMoveSpeed(int _speed);
     void Loop();
+    void LoopGetHit();
     bool getBcollided();
+    bool bgetBbullet();
+    void checkInRange(SDL_Rect *a);
 
 protected:
     float prevPos[2];
+    bool bIsBullet = false;
     bool bCollided = false;
     int moveSpeed;
     SDL_Rect colBox;

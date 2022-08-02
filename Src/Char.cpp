@@ -7,6 +7,7 @@ Char::Char(int _speed, int _boxW, int _boxH, float _x, float _y, int srcW, int s
     colBox.h = _boxH;
     moveSpeed = _speed;
 }
+bool Char::bgetBbullet() { return bIsBullet; }
 Char::Char(int _speed, int _boxW, int _boxH, float _x, float _y, SDL_Texture *pTex) : Entity(_x, _y, pTex)
 {
     colBox.x = position.x;
@@ -39,11 +40,22 @@ int Char::getMoveSpeed()
 {
     return moveSpeed;
 }
+void Char::LoopGetHit()
+{
+    if (moveSpeed >= 15)
+    {
+        moveSpeed -= 12;
+    }
+}
 void Char::Loop()
 {
+    if (moveSpeed >= 1 && moveSpeed <= 10)
+    {
+        moveSpeed += 0.001;
+    }
     if (bCollided)
     {
-        std::cout << "prevX: " << prevPos[0] << ", prevY: " << prevPos[1] << "x: " << position.x << ", y: " << position.y << std::endl;
+        // std::cout << "prevX: " << prevPos[0] << ", prevY: " << prevPos[1] << "x: " << position.x << ", y: " << position.y << std::endl;
         position.x = prevPos[0];
         position.y = prevPos[1];
     }
@@ -74,7 +86,7 @@ bool Char::detectCollision(SDL_Rect *a, SDL_Rect *b)
         // a->x = 0;
         this->setX(0);
     }
-    if ((a->y + a->h) > 600)
+    if ((a->y + a->h) > 800)
     {
         // a->y = 0;
         this->setY(0);
@@ -83,7 +95,7 @@ bool Char::detectCollision(SDL_Rect *a, SDL_Rect *b)
     if (this->getY() < 0)
     {
         // a->y = 600;
-        this->setY(600 - a->h);
+        this->setY(800 - a->h);
     }
     int leftA, leftB;
     int rightA, rightB;
@@ -133,6 +145,32 @@ bool Char::detectCollision(SDL_Rect *a, SDL_Rect *b)
     // If none of the sides from A are outside B
     bCollided = true;
     return true;
+}
+void Char::checkInRange(SDL_Rect *a)
+// bool Char::detectCollision(SDL_Rect &a, SDL_Rect &b)
+{
+    // if (a->x < 0)
+    if (this->getX() < 0)
+    {
+        // a->x = 800;
+        this->setX(800 - a->w);
+    }
+    if ((a->x + a->w) > 800)
+    {
+        // a->x = 0;
+        this->setX(0);
+    }
+    if ((a->y + a->h) > 800)
+    {
+        // a->y = 0;
+        this->setY(0);
+    }
+    // if (a->y < 0)
+    if (this->getY() < 0)
+    {
+        // a->y = 600;
+        this->setY(800 - a->h);
+    }
 }
 bool Char::getBcollided()
 {

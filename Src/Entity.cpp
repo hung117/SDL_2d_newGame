@@ -35,7 +35,10 @@ Entity::Entity(float _x, float _y)
 {
     position = Vector2(_x, _y);
 }
-
+Vector2 *Entity::getPos()
+{
+    return &position;
+}
 float Entity::getX()
 {
     return position.x;

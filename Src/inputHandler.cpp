@@ -3,7 +3,7 @@
 #include "./include/misc.h"
 using namespace std;
 
-void EventHandler(SDL_Event &event, bool &bGameRunning, int &xDir, int &yDir, bool &bSpace, bool &bGetInput, bool &b_debugShow)
+void EventHandler(SDL_Event &event, bool &bGameRunning, int &xDir, int &yDir, bool &bSpace, bool &bGetInput, bool &b_debugShow, bool &LClick, Vector2 *MousePos)
 {
     while (SDL_PollEvent(&event))
     {
@@ -85,11 +85,20 @@ void EventHandler(SDL_Event &event, bool &bGameRunning, int &xDir, int &yDir, bo
                     cout << "--up" << endl;
                 break;
             case SDL_MOUSEBUTTONDOWN:
+                bGetInput = true;
                 switch (event.button.button)
                 {
                 case SDL_BUTTON_LEFT:
-                    if (b_debugShow)
-                        cout << "left";
+                    // if (b_debugShow)
+                    if (true)
+                    {
+                        int x, y;
+                        Uint32 buttons = SDL_GetMouseState(&x, &y);
+                        LClick = true;
+                        MousePos->x = (float)x;
+                        MousePos->y = (float)y;
+                        cout << "left x:" << MousePos->x << " y: " << MousePos->y;
+                    }
                     break;
                 case SDL_BUTTON_RIGHT:
                     if (b_debugShow)
@@ -100,6 +109,10 @@ void EventHandler(SDL_Event &event, bool &bGameRunning, int &xDir, int &yDir, bo
                     cout << "--click" << endl;
                 break;
             default:
+                break;
+            case SDL_MOUSEBUTTONUP:
+                bGetInput = false;
+                LClick = false;
                 break;
             }
         }
