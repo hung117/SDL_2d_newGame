@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
     NPC Enemy1 = NPC(20, 64, 64, 365, 100, 32, 32, true);
     ActiveList.push_back(&Enemy1);
 
-    // Bullet bullet1 = Bullet(10, 16, 16, 0, 0, 32, 32);
     Bullet bullet1 = Bullet(15, 15, 50000, 0, 0, 32, 32);
     Bullet bullet2 = Bullet(15, 15, 50000, 0, 0, 32, 32);
     BulletPool.push_back(&bullet1);
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
     Bullet *tmp;
     Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: 0.00", 350, 10);
     Text Txt_Timer = Text("../Res/dev/font/font.ttf", "Timer: 0.00", 200, 10);
-    Text Txt_GameOVER = Text("../Res/dev/font/font.ttf", "GameOver: Play Again ?", 300, 300);
+    Text Txt_GameOVER = Text("../Res/dev/font/font.ttf", "GameOver: Play Again ?", 250, 300);
     stringstream stream;
     string scoreDisplay;
     /*================================== SDL LOOP==============================================*/
@@ -113,7 +112,6 @@ int main(int argc, char *argv[])
     {
 
         frameStart = SDL_GetTicks();
-        // EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog);
         EventHandler(event, bGameRunning, xDir, yDir, bDash, bGetInput, bshowLog, bLClick, &mousePos);
         if (bGameOver)
         {
@@ -123,6 +121,7 @@ int main(int argc, char *argv[])
             SCORE = 0;
             mixer.Pause();
             // mixer.Stop();
+            Window.Render(Window.Surface2Texture(Txt_score.getSurface()), Txt_score.getRect());
             Window.Render(Window.Surface2Texture(Txt_GameOVER.getSurface()), Txt_GameOVER.getRect());
             Window.Display();
             if (bDash == true)
@@ -274,6 +273,8 @@ int main(int argc, char *argv[])
                         Window.Render(*Bullets[cj], Bullets[cj]->getColBox()->w);
                     if (ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), Bullets[cj]->getColBox()))
                     {
+                        mixer.loadChunk("../Res/audio/oof.wav");
+                        mixer.PlayChunk();
                         cout << "ACTIVE GET SHOT!!!";
                         Bullets.pop_back();
                         goto getShot;
