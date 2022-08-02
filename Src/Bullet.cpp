@@ -10,6 +10,8 @@ void Bullet::Loop()
     }
     bAlive = true;
     this->setPos(this->getX() + mXDir * moveSpeed, this->getY() + mYDir * moveSpeed);
+    colBox.x = position.x;
+    colBox.y = position.y;
 }
 void Bullet::Behavior(SDL_Texture *_bullet)
 {
@@ -21,24 +23,26 @@ void Bullet::Call(Vector2 *mousePos, Vector2 *PC_Pos)
     float _x = PC_Pos->x;
     float _y = PC_Pos->y;
     mXDir = mousePos->x - _x; // _x PC position;
-    setPos(PC_Pos->x, PC_Pos->y);
-    if (mXDir > 0)
-    {
-        mXDir = 1;
-    }
-    else if (mXDir < 0)
-    {
-        mXDir = -1;
-    }
+    setPos(PC_Pos->x + 16, PC_Pos->y);
+    // if (mXDir > 0)
+    // {
+    //     mXDir = 1;
+    // }
+    // else if (mXDir < 0)
+    // {
+    //     mXDir = -1;
+    // }
     mYDir = mousePos->y - _y; // _y PC position;
-    if (mYDir > 0)
-    {
-        mYDir = 1;
-    }
-    else if (mYDir < 0)
-    {
-        mYDir = -1;
-    }
+    // if (mYDir > 0)
+    // {
+    //     mYDir = 1;
+    // }
+    // else if (mYDir < 0)
+    // {
+    //     mYDir = -1;
+    // }
+    mXDir /= 700;
+    mYDir /= 700;
 }
 
 Bullet::Bullet(int _speed, int _boxW, float _despawnTime, float _x, float _y, int srcW, int srcH) : Char(_speed, _boxW, _boxW, _x, _y, srcW, srcH)

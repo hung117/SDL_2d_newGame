@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
     SDL_Texture *Enemy_WalkTexture = Window.loadTexture("../Res/gfx/Walk_Enemy.png");
     SDL_Texture *Frog_HopTexture = Window.loadTexture("../Res/gfx/frog_hop.png");
     SDL_Texture *Frog_IdleTexture = Window.loadTexture("../Res/gfx/frog_Idle.png");
+    SDL_Texture *BulletTexture = Window.loadTexture("../Res/gfx/bullet.png");
     // SDL_Texture *SkyboxTexture = Window.loadTexture("../Res/gfx/sky.png");
     SDL_Texture *SkyboxTexture = Window.loadTexture("../Res/gfx/ground.png");
     SDL_Texture *BoxTexture = Window.loadTexture("../Res/gfx/box.png");
@@ -88,8 +89,10 @@ int main(int argc, char *argv[])
     ActiveList.push_back(&Enemy1);
 
     // Bullet bullet1 = Bullet(10, 16, 16, 0, 0, 32, 32);
-    Bullet bullet1 = Bullet(10, 50, 50000, 0, 0, 32, 32);
+    Bullet bullet1 = Bullet(15, 15, 50000, 0, 0, 32, 32);
+    Bullet bullet2 = Bullet(15, 15, 50000, 0, 0, 32, 32);
     BulletPool.push_back(&bullet1);
+    BulletPool.push_back(&bullet2);
     Bullet *tmp;
     Text Txt_score = Text("../Res/dev/font/font.ttf", "Score: 0.00", 350, 10);
     Text Txt_Timer = Text("../Res/dev/font/font.ttf", "Timer: 0.00", 200, 10);
@@ -252,10 +255,6 @@ int main(int argc, char *argv[])
                      << "CLICK" << endl;
                 if (BulletPool.size() > 0 && BulletPool.size() <= 2)
                 {
-                    // tmp = BulletPool.back();
-                    // tmp->Call(&mousePos, PlayerChar.getPos());
-                    // BulletPool.pop_back();
-                    // Bullets.push_back(tmp);
                     if (Bullets.size() > 0)
                         Bullets.pop_back();
                     Bullets.push_back(&bullet1);
@@ -268,7 +267,7 @@ int main(int argc, char *argv[])
                 int cj = 0;
                 for (auto j = Bullets.begin(); j != Bullets.end(); ++j)
                 {
-                    Bullets[cj]->Behavior(grassTexture);
+                    Bullets[cj]->Behavior(BulletTexture);
                     Bullets[cj]->checkInRange(Bullets[cj]->getColBox());
                     Bullets[cj]->Loop();
                     if (ci == 0)
