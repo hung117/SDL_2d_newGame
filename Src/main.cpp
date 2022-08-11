@@ -27,6 +27,8 @@ const int WIDTH = 800, HEIGHT = 800;
 const int FPS = 60;
 const int frameDelay = 1000 / FPS;
 const int animDelay = 1000 / 10;
+const int spawnEnemy_interval = 2 * 1000;
+int spawnLandMark = 0;
 vector<NPC *> ActiveList;    // PC/NPC;
 vector<Char *> StaticList;   // Wall, box,...;
 vector<Bullet *> Bullets;    // Wall, box,...;
@@ -98,6 +100,7 @@ int main(int argc, char *argv[])
     Text Txt_GameOVER = Text("../Res/dev/font/font.ttf", "GameOver: Play Again ?", 250, 300);
     stringstream stream;
     string scoreDisplay;
+    int originAtiveList = ActiveList.size();
     /*================================== SDL LOOP==============================================*/
 
     bool bGameRunning = true;
@@ -129,6 +132,10 @@ int main(int argc, char *argv[])
                 mixer.loadChunk("../Res/audio/scratch.wav");
 
                 bGameOver = false;
+            }
+            while (ActiveList.size() > originAtiveList)
+            {
+                ActiveList.pop_back();
             }
         }
         else
@@ -248,6 +255,12 @@ int main(int argc, char *argv[])
                     ci++;
                 }
             }
+            if (spawnEnemy_interval < SDL_GetTicks() - spawnLandMark)
+            {
+                NPC *Enemy = new NPC(20, 64, 64, 365, 100, 32, 32, true);
+                ActiveList.push_back(Enemy);
+                spawnLandMark = SDL_GetTicks();
+            }
             if (bLClick)
             {
                 cout << endl
@@ -257,9 +270,12 @@ int main(int argc, char *argv[])
                     if (Bullets.size() > 0)
                         Bullets.pop_back();
                     Bullets.push_back(&bullet1);
+                    // Bullets.push_back(BulletPool.back());
+                    // BulletPool.pop_back();
                     Bullets.back()->Call(&mousePos, PlayerChar.getPos());
                 }
             }
+        reset:
             ci = 0;
             for (auto i = ActiveList.begin(); i != ActiveList.end(); ++i)
             {
@@ -267,17 +283,20 @@ int main(int argc, char *argv[])
                 for (auto j = Bullets.begin(); j != Bullets.end(); ++j)
                 {
                     Bullets[cj]->Behavior(BulletTexture);
-                    Bullets[cj]->checkInRange(Bullets[cj]->getColBox());
+                    // Bullets[cj]->checkInRange(Bullets[cj]->getColBox());
                     Bullets[cj]->Loop();
                     if (ci == 0)
                         Window.Render(*Bullets[cj], Bullets[cj]->getColBox()->w);
                     if (ActiveList[ci]->detectCollision(ActiveList[ci]->getColBox(), Bullets[cj]->getColBox()))
                     {
-                        mixer.loadChunk("../Res/audio/oof.wav");
-                        mixer.PlayChunk();
-                        cout << "ACTIVE GET SHOT!!!";
-                        Bullets.pop_back();
-                        goto getShot;
+                        if (ActiveList[ci]->getBHostile())
+                        {
+                            mixer.loadChunk("../Res/audio/oof.wav");
+                            mixer.PlayChunk();
+                            cout << "ACTIVE GET SHOT!!!";
+                            Bullets.pop_back();
+                            goto getShot;
+                        }
                     }
                     else
                     {
@@ -287,6 +306,8 @@ int main(int argc, char *argv[])
                 }
             getShot:
                 ActiveList[ci]->LoopGetHit();
+                // ActiveList.erase(ActiveList.begin() + ci);
+                // goto reset;
             notGetShot:
                 ci++;
             }
